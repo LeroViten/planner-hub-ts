@@ -1,10 +1,16 @@
-import axios from 'axios';
+import axios, { AxiosRequestConfig, AxiosError } from 'axios';
 import { toast } from 'react-hot-toast';
 import { store } from '../redux/store';
 
+interface IAxiosQuery {
+  url: string;
+  method: AxiosRequestConfig['method'];
+  data: AxiosRequestConfig['data'];
+}
+
 const axiosBaseQuery =
   ({ baseUrl } = { baseUrl: '' }) =>
-  async ({ url, method, data }) => {
+  async ({ url, method, data }: IAxiosQuery) => {
     const persistedToken = store.getState().auth.token;
 
     if (url === '/users/current') {
@@ -24,7 +30,7 @@ const axiosBaseQuery =
       }
 
       return { data: result.data };
-    } catch (err) {
+    } catch (err: any) {
       let error = { status: err.response?.status, data: err.response?.data };
       if (error.status === 400) {
         toast.error('The name is already in use 🤷‍♂️');
