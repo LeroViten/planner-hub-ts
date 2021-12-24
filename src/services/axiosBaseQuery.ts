@@ -1,4 +1,4 @@
-import axios, { AxiosRequestConfig, AxiosError } from 'axios';
+import axios, { AxiosRequestConfig } from 'axios';
 import { toast } from 'react-hot-toast';
 import { store } from '../redux/store';
 

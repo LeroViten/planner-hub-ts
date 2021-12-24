@@ -63,6 +63,10 @@ input:invalid {
   border: 'solid 2px tomato';
 }
 
+.MuiFab-root {
+  position: absolute !important;
+}
+
 .Loader {
   position: absolute;
   text-align: center;

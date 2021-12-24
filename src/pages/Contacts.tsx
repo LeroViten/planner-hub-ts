@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { makeStyles } from '@material-ui/core';
 import { useSpring, animated } from 'react-spring';
 import { useDispatch, useSelector } from 'react-redux';
@@ -6,6 +6,7 @@ import { authSelectors } from '../redux/auth';
 import { useFetchUserQuery } from '../redux/auth/authApi';
 import { refreshCredentials } from '../redux/auth/authSlice';
 import { useFetchContactsQuery } from '../redux/contacts/contactSlice';
+import IContacts from '../interfaces/Contacts.interface';
 import Fab from '@mui/material/Fab';
 import AddIcon from '@mui/icons-material/Add';
 import Loader from 'react-loader-spinner';
@@ -28,23 +29,28 @@ const useStyles = makeStyles({
     display: 'block',
   },
   fabButton: {
-    position: 'absolute !important',
     bottom: '0px !important',
     right: '0px !important',
   },
 });
 
 export default function Contacts() {
-  const [contacts, setContacts] = useState([]);
+  const [contacts, setContacts] = useState<IContacts[]>([]);
   const [filter, setFilter] = useState('');
   const classes = useStyles();
   const dispatch = useDispatch();
   const history = useHistory();
   const token = useSelector(authSelectors.getToken);
+
   const { data: user } = useFetchUserQuery(token, {
     skip: token === null,
   });
-  const { data, isFetching } = useFetchContactsQuery();
+
+  const { data, isFetching } = useFetchContactsQuery({
+    pollingInterval: 3000,
+    refetchOnMountOrArgChange: true,
+    skip: false,
+  });
 
   useEffect(() => {
     (async () => {
@@ -84,7 +90,7 @@ export default function Contacts() {
     delay: 2000,
   });
 
-  const handleClick = e => {
+  const handleClick = (e: React.MouseEvent<HTMLElement>) => {
     e.preventDefault();
 
     history.push('/create-contact');
@@ -93,7 +99,7 @@ export default function Contacts() {
   const getVisibleContacts = () => {
     const normalizedFilter = filter.toLowerCase();
 
-    return contacts.filter(contact =>
+    return contacts.filter((contact) =>
       contact.name.toLowerCase().includes(normalizedFilter)
     );
   };
@@ -106,7 +112,7 @@ export default function Contacts() {
         {contacts === [] && <h1>No contacts to show</h1>}
         {isFetching && (
           <Loader
-            className="Loader"
+            // className="Loader"
             type="Puff"
             color="#77d5f1"
             height={100}
@@ -123,7 +129,7 @@ export default function Contacts() {
           autoComplete="off"
           // fullWidth
           helperText="Type a name to find"
-          onChange={e => setFilter(e.currentTarget.value)}
+          onChange={(e) => setFilter(e.currentTarget.value)}
         />
         {contacts && (
           <Masonry
@@ -131,14 +137,14 @@ export default function Contacts() {
             className="my-masonry-grid"
             columnClassName="my-masonry-grid_column"
           >
-            {visibleContacts.map(contact => (
+            {visibleContacts.map((contact) => (
               <animated.div key={contact.id} style={cardsAnimProps}>
                 <ContactCard contact={contact} />
               </animated.div>
             ))}
           </Masonry>
         )}
-        <animated.div styles={fabAnimProps}>
+        <animated.div style={fabAnimProps}>
           <Fab
             aria-label="add contact button"
             color="primary"

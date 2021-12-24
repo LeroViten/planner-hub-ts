@@ -11,9 +11,11 @@ import {
 } from '../redux/contacts/contactSlice';
 import { useFetchUserQuery } from '../redux/auth/authApi';
 import { refreshCredentials } from '../redux/auth/authSlice';
+import IContacts from '../interfaces/Contacts.interface';
 import Typography from '@material-ui/core/Typography';
 import Button from '@material-ui/core/Button';
-import Container from '@material-ui/core/Container';
+// import Container from '@material-ui/core/Container';
+import Container from '@mui/material/Container';
 import KeyboardArrowRightIcon from '@material-ui/icons/KeyboardArrowRight';
 import TextField from '@material-ui/core/TextField';
 // import Radio from '@material-ui/core/Radio';
@@ -35,7 +37,7 @@ const useStyles = makeStyles({
 
 export default function CreateContact() {
   // const [category, setCategory] = useState('family');
-  const [contacts, setContacts] = useState([]);
+  const [contacts, setContacts] = useState<IContacts[]>([]);
   const classes = useStyles();
   const history = useHistory();
   const dispatch = useDispatch();
@@ -44,7 +46,11 @@ export default function CreateContact() {
     skip: token === null,
   });
   const [createContact, { isLoading }] = useCreateContactMutation();
-  const { data } = useFetchContactsQuery();
+  const { data } = useFetchContactsQuery({
+    pollingInterval: 3000,
+    refetchOnMountOrArgChange: true,
+    skip: false,
+  });
 
   const pagesAnimProps = useSpring({
     from: {
@@ -76,11 +82,16 @@ export default function CreateContact() {
     })();
   }, [data]);
 
-  const handleSubmit = e => {
-    const name = e.currentTarget.name.value;
-    const number = e.currentTarget.number.value;
-
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+
+    const target = e.target as typeof e.target & {
+      name: { value: string };
+      number: { value: string };
+    };
+
+    const name = target.name.value;
+    const number = target.number.value;
 
     const newContact = {
       name,
@@ -111,7 +122,7 @@ export default function CreateContact() {
 
     if (
       contacts.find(
-        contact => name.toLowerCase() === contact.name.toLowerCase()
+        (contact) => name.toLowerCase() === contact.name.toLowerCase()
       )
     ) {
       toast.error('Contact is already in the list', {
@@ -145,7 +156,7 @@ export default function CreateContact() {
   };
 
   return (
-    <Container size="sm">
+    <Container maxWidth="sm">
       <animated.div style={pagesAnimProps}>
         <Typography
           variant="h6"
@@ -224,7 +235,7 @@ export default function CreateContact() {
             >
               {isLoading && (
                 <Loader
-                  className="Loader"
+                  // className="Loader"
                   type="ThreeDots"
                   color="blue"
                   height={20}
