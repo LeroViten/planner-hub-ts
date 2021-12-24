@@ -14,8 +14,7 @@ import { refreshCredentials } from '../redux/auth/authSlice';
 import IContacts from '../interfaces/Contacts.interface';
 import Typography from '@material-ui/core/Typography';
 import Button from '@material-ui/core/Button';
-// import Container from '@material-ui/core/Container';
-import Container from '@mui/material/Container';
+import Container from '@material-ui/core/Container';
 import KeyboardArrowRightIcon from '@material-ui/icons/KeyboardArrowRight';
 import TextField from '@material-ui/core/TextField';
 // import Radio from '@material-ui/core/Radio';
@@ -156,7 +155,7 @@ export default function CreateContact() {
   };
 
   return (
-    <Container maxWidth="sm">
+    <Container>
       <animated.div style={pagesAnimProps}>
         <Typography
           variant="h6"

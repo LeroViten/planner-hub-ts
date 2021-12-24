@@ -20,7 +20,7 @@ const useStyles = makeStyles({
 export default function Weather() {
   const classes = useStyles();
   const [city, setCity] = useState('');
-  const { data, error, isFetching, isError } = useGetWeatherByNameQuery(city, {
+  const { data, isFetching, isError } = useGetWeatherByNameQuery(city, {
     skip: city === '',
   });
 
@@ -38,21 +38,21 @@ export default function Weather() {
     delay: 1000,
   });
 
-  const handleSubmit = e => {
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setCity(e.currentTarget.citySearch.value);
     e.currentTarget.reset();
   };
 
-  const showNotFoundError = isError && error.status === 404;
-  const showPokemonData = data && !isFetching && !isError;
+  const showNotFoundError = isError;
+  const showWeatherData = data && !isFetching && !isError;
 
   return (
     <Container>
       <animated.div style={pagesAnimProps}>
         {isFetching && (
           <Loader
-            className="Loader"
+            // className="Loader"
             type="Puff"
             color="blue"
             height={100}
@@ -79,7 +79,7 @@ export default function Weather() {
             >
               {isFetching && (
                 <Loader
-                  className="Loader"
+                  // className="Loader"
                   type="ThreeDots"
                   color="#77d5f1"
                   height={20}
@@ -97,7 +97,7 @@ export default function Weather() {
           </animated.h2>
         )}
 
-        {showPokemonData && (
+        {showWeatherData && (
           <animated.div className="weatherCard" style={animProps}>
             <h1>Here's weather for {data.name}</h1>
             <img

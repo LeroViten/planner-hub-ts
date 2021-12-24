@@ -1,4 +1,4 @@
-import axios, { AxiosRequestConfig } from 'axios';
+import axios, { AxiosRequestConfig, AxiosError } from 'axios';
 import { toast } from 'react-hot-toast';
 import { store } from '../redux/store';
 
@@ -30,16 +30,16 @@ const axiosBaseQuery =
       }
 
       return { data: result.data };
-    } catch (err: any) {
-      let error = { status: err.response?.status, data: err.response?.data };
-      if (error.status === 400) {
+    } catch (axiosError) {
+      let error = axiosError as AxiosError;
+      if (error.response?.status === 400) {
         toast.error('The name is already in use 🤷‍♂️');
-      } else if (error.status === 401) {
+      } else if (error.response?.status === 401) {
         toast.error('Please, authenticate first! ✌😎');
       } else {
         toast.error('Somethings wrong! Please try again later! 😢');
       }
-      return err;
+      return error;
     }
   };
 

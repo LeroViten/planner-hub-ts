@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { toast } from 'react-hot-toast';
 import { makeStyles } from '@material-ui/core';
 import { useHistory } from 'react-router-dom';
@@ -11,6 +11,7 @@ import {
 } from '../redux/contacts/contactSlice';
 import { useFetchUserQuery } from '../redux/auth/authApi';
 import { refreshCredentials } from '../redux/auth/authSlice';
+import IContacts from '../interfaces/Contacts.interface';
 import Typography from '@material-ui/core/Typography';
 import Button from '@material-ui/core/Button';
 import Container from '@material-ui/core/Container';
@@ -33,9 +34,13 @@ const useStyles = makeStyles({
   },
 });
 
+interface IRouteMatch {
+  id: string;
+}
+
 export default function EditContact() {
   // const [category, setCategory] = useState('family');
-  const [contacts, setContacts] = useState([]);
+  const [contacts, setContacts] = useState<IContacts[]>([]);
   const [name, setName] = useState('');
   const [number, setNumber] = useState('');
   const [editContact, { isLoading: updating }] = useEditContactMutation();
@@ -46,9 +51,15 @@ export default function EditContact() {
   const { data: user } = useFetchUserQuery(token, {
     skip: token === null,
   });
-  const { data } = useFetchContactsQuery();
-  const { id } = useParams();
-  const editedContact = contacts.find(contact => contact.id.toString() === id);
+  const { data } = useFetchContactsQuery({
+    pollingInterval: 3000,
+    refetchOnMountOrArgChange: true,
+    skip: false,
+  });
+  const { id } = useParams<IRouteMatch>();
+  const editedContact = contacts.find(
+    (contact) => contact.id.toString() === id
+  );
 
   /* eslint-disable no-useless-escape */
   /* prettier-ignore */
@@ -79,7 +90,7 @@ export default function EditContact() {
     }
   }, [editedContact, setName, setNumber]);
 
-  const handleChange = e => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
 
     switch (name) {
@@ -96,7 +107,7 @@ export default function EditContact() {
     }
   };
 
-  const handleSubmit = e => {
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     const updatedContact = {
@@ -146,7 +157,7 @@ export default function EditContact() {
   };
 
   return (
-    <Container size="sm">
+    <Container>
       <Typography
         variant="h6"
         color="textSecondary"
@@ -228,7 +239,7 @@ export default function EditContact() {
           >
             {updating && (
               <Loader
-                className="Loader"
+                // className="Loader"
                 type="ThreeDots"
                 color="blue"
                 height={20}
