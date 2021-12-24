@@ -1,10 +1,8 @@
 body {
   margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  background: #f9f9f9;
 }
 
 code {
@@ -36,4 +34,53 @@ ol {
   margin: 0;
   padding: 0;
   list-style: none;
+}
+
+/* Some personal styles */
+
+.my-masonry-grid {
+  display: -webkit-box; /* Not needed if autoprefixing */
+  display: -ms-flexbox; /* Not needed if autoprefixing */
+  display: flex;
+  margin-left: -20px; /* gutter size offset */
+  width: auto;
+}
+.my-masonry-grid_column {
+  padding-left: 20px; /* gutter size */
+  background-clip: padding-box;
+}
+.my-masonry-grid_column > div {
+  /* change div to reference your elements you put in <Masonry> */
+  margin-bottom: 30px;
+  /* transition: all 1500 ease-in-out; */
+}
+
+/* .my-masonry-grid_column > div > div:hover {
+  transform: scale(0.99);
+} */
+
+input:invalid {
+  border: 'solid 2px tomato';
+}
+
+.Loader {
+  position: absolute;
+  text-align: center;
+  left: 0;
+  right: 0;
+  z-index: 999;
+}
+
+.weatherCard {
+  width: fit-content;
+  border-radius: 4px;
+  padding: 10px 15px;
+  margin-top: 10px;
+  background-color: #d6d6d6;
+  box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
+}
+
+.weatherIcon {
+  width: 60px;
+  height: 60px;
 }
