@@ -40,11 +40,16 @@ export default function CreateNote() {
     to: { opacity: 1, transform: 'translate(0px,0px)' },
   });
 
-  const handleSubmit = e => {
-    const title = e.currentTarget.title.value;
-    const details = e.currentTarget.details.value;
-
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+
+    const target = e.target as typeof e.target & {
+      title: { value: string };
+      details: { value: string };
+    };
+
+    const title = target.title.value;
+    const details = target.details.value;
 
     const newNote = {
       title,
@@ -91,7 +96,7 @@ export default function CreateNote() {
   };
 
   return (
-    <Container size="sm">
+    <Container>
       <animated.div style={pagesAnimProps}>
         <Typography
           variant="h6"
@@ -130,7 +135,7 @@ export default function CreateNote() {
             <FormLabel>Note Category</FormLabel>
             <RadioGroup
               value={category}
-              onChange={e => setCategory(e.currentTarget.value)}
+              onChange={(e) => setCategory(e.currentTarget.value)}
             >
               <FormControlLabel
                 value="money"
@@ -169,7 +174,7 @@ export default function CreateNote() {
             >
               {isLoading && (
                 <Loader
-                  className="Loader"
+                  // className="Loader"
                   type="ThreeDots"
                   color="blue"
                   height={20}

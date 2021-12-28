@@ -7,6 +7,7 @@ import { toast } from 'react-hot-toast';
 import { useHistory } from 'react-router-dom';
 import { useParams } from 'react-router';
 import { makeStyles } from '@material-ui/core';
+import INotes from '../interfaces/Notes.interface';
 import Typography from '@material-ui/core/Typography';
 import Button from '@material-ui/core/Button';
 import Container from '@material-ui/core/Container';
@@ -29,17 +30,25 @@ const useStyles = makeStyles({
   },
 });
 
+interface IRouteMatch {
+  id: string;
+}
+
 export default function CreateNote() {
-  const [notes, setNotes] = useState([]);
+  const [notes, setNotes] = useState<INotes[]>([]);
   const [title, setTitle] = useState('');
   const [details, setDetails] = useState('');
   const [category, setCategory] = useState('money');
   const classes = useStyles();
   const history = useHistory();
   const [editNote, { isLoading: updating }] = useEditNoteMutation();
-  const { data } = useFetchNotesQuery();
-  const { id } = useParams();
-  const editedNote = notes.find(note => note.id.toString() === id);
+  const { data } = useFetchNotesQuery({
+    pollingInterval: 3000,
+    refetchOnMountOrArgChange: true,
+    skip: false,
+  });
+  const { id } = useParams<IRouteMatch>();
+  const editedNote = notes.find((note) => note.id.toString() === id);
 
   useEffect(() => {
     (async () => {
@@ -58,7 +67,7 @@ export default function CreateNote() {
     }
   }, [editedNote, setTitle, setDetails, setCategory]);
 
-  const handleChange = e => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
 
     switch (name) {
@@ -75,7 +84,7 @@ export default function CreateNote() {
     }
   };
 
-  const handleSubmit = e => {
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     const updatedNote = {
@@ -124,7 +133,7 @@ export default function CreateNote() {
   };
 
   return (
-    <Container size="sm">
+    <Container>
       <Typography
         variant="h6"
         color="textSecondary"
@@ -166,7 +175,7 @@ export default function CreateNote() {
           <FormLabel>Note Category</FormLabel>
           <RadioGroup
             value={category}
-            onChange={e => setCategory(e.target.value)}
+            onChange={(e) => setCategory(e.target.value)}
           >
             <FormControlLabel
               value="money"
@@ -205,7 +214,7 @@ export default function CreateNote() {
           >
             {updating && (
               <Loader
-                className="Loader"
+                // className="Loader"
                 type="ThreeDots"
                 color="blue"
                 height={20}

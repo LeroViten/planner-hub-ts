@@ -36,7 +36,7 @@ export default function Login() {
     to: { opacity: 1, transform: 'translate(0px,0px)' },
   });
 
-  const handleSubmit = async e => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     const email = e.currentTarget.email.value;
     const password = e.currentTarget.password.value;
 
@@ -84,14 +84,14 @@ export default function Login() {
           },
         });
         history.push('/');
-      } catch (err) {
+      } catch (err: any) {
         toast.error(err.message);
       }
     }
   };
 
   return (
-    <Container size="sm">
+    <Container>
       <animated.div style={pagesAnimProps}>
         <Typography
           variant="h6"
@@ -135,7 +135,7 @@ export default function Login() {
             >
               {isLoading && (
                 <Loader
-                  className="Loader"
+                  // className="Loader"
                   type="ThreeDots"
                   color="blue"
                   height={20}

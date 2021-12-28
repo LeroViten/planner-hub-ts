@@ -1,7 +1,9 @@
+import React, { useState, useEffect } from 'react';
 import { useFetchNotesQuery } from '../redux/notes/noteSlice';
 import { useSpring, animated } from 'react-spring';
 import { useHistory } from 'react-router';
 import { makeStyles } from '@material-ui/core';
+import INotes from '../interfaces/Notes.interface';
 import Fab from '@mui/material/Fab';
 import AddIcon from '@mui/icons-material/Add';
 import Loader from 'react-loader-spinner';
@@ -18,16 +20,29 @@ const breakpoints = {
 
 const useStyles = makeStyles({
   fabButton: {
-    position: 'absolute !important',
     bottom: '0px !important',
     right: '0px !important',
   },
 });
 
 export default function Notes() {
-  const { data: notes, isFetching } = useFetchNotesQuery();
+  const [notes, setNotes] = useState<INotes[]>([]);
+  const { data, isFetching } = useFetchNotesQuery({
+    pollingInterval: 3000,
+    refetchOnMountOrArgChange: true,
+    skip: false,
+  });
   const history = useHistory();
   const classes = useStyles();
+
+  useEffect(() => {
+    (async () => {
+      await data;
+      if (data) {
+        setNotes(data);
+      }
+    })();
+  }, [data]);
 
   const pagesAnimProps = useSpring({
     from: {
@@ -49,7 +64,7 @@ export default function Notes() {
     delay: 2000,
   });
 
-  const handleClick = e => {
+  const handleClick = (e: React.MouseEvent<HTMLElement>) => {
     e.preventDefault();
 
     history.push('/create-note');
@@ -61,7 +76,7 @@ export default function Notes() {
         {notes === [] && <h1>No notes to show</h1>}
         {isFetching && (
           <Loader
-            className="Loader"
+            // className="Loader"
             type="Puff"
             color="#77d5f1"
             height={100}
@@ -74,14 +89,14 @@ export default function Notes() {
             className="my-masonry-grid"
             columnClassName="my-masonry-grid_column"
           >
-            {notes.map(note => (
+            {notes.map((note) => (
               <animated.div key={note.id} style={cardsAnimProps}>
                 <NoteCard note={note} />
               </animated.div>
             ))}
           </Masonry>
         )}
-        <animated.div styles={fabAnimProps}>
+        <animated.div style={fabAnimProps}>
           <Fab
             aria-label="add note button"
             color="primary"

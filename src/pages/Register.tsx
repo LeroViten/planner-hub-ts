@@ -36,7 +36,7 @@ export default function Register() {
     to: { opacity: 1, transform: 'translate(0px,0px)' },
   });
 
-  const handleSubmit = async e => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     const name = e.currentTarget.username.value;
     const email = e.currentTarget.email.value;
     const password = e.currentTarget.password.value;
@@ -97,14 +97,14 @@ export default function Register() {
           },
         });
         history.push('/');
-      } catch (err) {
+      } catch (err: any) {
         toast.error(err.message);
       }
     }
   };
 
   return (
-    <Container size="sm">
+    <Container>
       <animated.div style={pagesAnimProps}>
         <Typography
           variant="h6"
@@ -158,7 +158,7 @@ export default function Register() {
             >
               {isLoading && (
                 <Loader
-                  className="Loader"
+                  // className="Loader"
                   type="ThreeDots"
                   color="blue"
                   height={20}
